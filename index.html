@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Team Org Chart</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0f2544;
+    --blue: #1a5cb5;
+    --mid: #2e7de8;
+    --accent: #4DAAFF;
+    --gold: #f5c842;
+    --light: #e8f1ff;
+    --card-bg: #ffffff;
+    --text: #0f2544;
+    --muted: #6b7ea8;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0a1628;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(77,170,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,170,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .bg-glow {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,92,181,0.15) 0%, transparent 70%);
+    top: -100px; left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .label-badge {
+    display: inline-block;
+    background: rgba(77,170,255,0.12);
+    border: 1px solid rgba(77,170,255,0.25);
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+  }
+
+  /* Sections */
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 20px;
+    opacity: 0.7;
+  }
+
+  /* Connector lines */
+  .connector-v {
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(77,170,255,0.4), rgba(77,170,255,0.1));
+    margin: 0 auto;
+  }
+
+  .connector-h-wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .connector-h-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 24px;
+    background: rgba(77,170,255,0.3);
+    transform: translateX(-50%);
+  }
+
+  .branch-line {
+    position: absolute;
+    top: 24px;
+    height: 2px;
+    background: rgba(77,170,255,0.25);
+  }
+
+  /* Cards */
+  .card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid rgba(77,170,255,0.18);
+    border-radius: 16px;
+    padding: 22px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(77,170,255,0.06), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover { 
+    transform: translateY(-4px);
+    border-color: rgba(77,170,255,0.45);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(77,170,255,0.2);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card.management {
+    background: linear-gradient(145deg, rgba(26,92,181,0.2), rgba(15,37,68,0.4));
+    border-color: rgba(77,170,255,0.3);
+  }
+
+  .card.head {
+    background: linear-gradient(145deg, rgba(26,92,181,0.35), rgba(15,37,68,0.5));
+    border-color: rgba(77,170,255,0.45);
+  }
+
+  .card-level {
+    font-family: 'Syne', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+
+  .card-role {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  .card-icon {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  /* Color variants */
+  .c-gold .card-level { color: var(--gold); }
+  .c-gold .card-role { color: var(--gold); }
+  .c-gold .card-icon { background: rgba(245,200,66,0.12); }
+
+  .c-blue .card-level { color: var(--accent); }
+  .c-blue .card-role { color: var(--accent); }
+  .c-blue .card-icon { background: rgba(77,170,255,0.12); }
+
+  .c-teal .card-level { color: #4DDDCC; }
+  .c-teal .card-role { color: #4DDDCC; }
+  .c-teal .card-icon { background: rgba(77,221,204,0.1); }
+
+  .c-purple .card-level { color: #b07dff; }
+  .c-purple .card-role { color: #b07dff; }
+  .c-purple .card-icon { background: rgba(176,125,255,0.1); }
+
+  .c-green .card-level { color: #5CE05A; }
+  .c-green .card-role { color: #5CE05A; }
+  .c-green .card-icon { background: rgba(92,224,90,0.1); }
+
+  .c-orange .card-level { color: #FF9A4D; }
+  .c-orange .card-role { color: #FF9A4D); }
+  .c-orange .card-icon { background: rgba(255,154,77,0.1); }
+
+  /* Layout */
+  .top-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .bottom-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 0;
+  }
+
+  @media (max-width: 800px) {
+    .bottom-row { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .top-row, .bottom-row { grid-template-columns: 1fr; }
+  }
+
+  /* SVG connector */
+  .org-svg {
+    display: block;
+    margin: 0 auto;
+    overflow: visible;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,16,32,0.8);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: linear-gradient(145deg, #111e35, #0d1a2e);
+    border: 1px solid rgba(77,170,255,0.2);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s ease;
+    position: relative;
+  }
+
+  .modal-overlay.active .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(255,255,255,0.06);
+    border: none;
+    color: rgba(255,255,255,0.5);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .modal-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+  .modal-icon { font-size: 32px; margin-bottom: 16px; }
+
+  .modal-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .modal-role {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .modal-section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 10px;
+  }
+
+  .modal-list { list-style: none; }
+
+  .modal-list li {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    line-height: 1.4;
+    display: flex;
+    gap: 10px;
+  }
+
+  .modal-list li::before {
+    content: '→';
+    color: var(--accent);
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(77,170,255,0.12);
+    border: 1px solid rgba(77,170,255,0.2);
+    color: var(--accent);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-top: 6px;
+  }
+
+  /* Animate in */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card { animation: fadeUp 0.5s ease both; }
+  .top-row .card:nth-child(1) { animation-delay: 0.1s; }
+  .top-row .card:nth-child(2) { animation-delay: 0.2s; }
+  .bottom-row .card:nth-child(1) { animation-delay: 0.3s; }
+  .bottom-row .card:nth-child(2) { animation-delay: 0.4s; }
+  .bottom-row .card:nth-child(3) { animation-delay: 0.5s; }
+  .bottom-row .card:nth-child(4) { animation-delay: 0.6s; }
+
+  .c-orange .card-role { color: #FF9A4D; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="container">
+  <header>
+    <div class="label-badge">Organization Chart</div>
+    <h1>QA <span>Team</span> Structure</h1>
+    <p class="subtitle">Click any card to view full role details &amp; responsibilities</p>
+  </header>
+
+  <!-- Management Level -->
+  <div class="section-label">⬥ Management Level ⬥</div>
+  <div class="top-row">
+    <div class="card head management c-gold" onclick="openModal('decha')">
+      <div class="card-icon">🏆</div>
+      <div class="card-level c-gold">Head Coach</div>
+      <div class="card-name">Decha Kenthaworn</div>
+      <div class="card-role c-gold">Team Leadership & Direction</div>
+      <div class="card-desc">Sets strategy, mentors members, and drives team alignment with project goals.</div>
+    </div>
+    <div class="card management c-blue" onclick="openModal('edison')">
+      <div class="card-icon">🔍</div>
+      <div class="card-level">Inspector</div>
+      <div class="card-name">Edison Zhang</div>
+      <div class="card-role">Process Quality Oversight</div>
+      <div class="card-desc">Audits QA processes and ensures the team upholds quality standards.</div>
+    </div>
+  </div>
+
+  <!-- Connector -->
+  <div style="height:32px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin: 4px 0;">
+    <div class="connector-v" style="height:32px;"></div>
+  </div>
+
+  <!-- QA Execution Level -->
+  <div class="section-label">⬥ QA Execution Team ⬥</div>
+  <div class="bottom-row">
+    <div class="card c-blue" onclick="openModal('marty')">
+      <div class="card-icon">👁️</div>
+      <div class="card-level">Observer</div>
+      <div class="card-name">MartinyBob</div>
+      <div class="card-role">All Projects</div>
+      <div class="card-desc">End-to-end project review before delivery.</div>
+    </div>
+    <div class="card c-teal" onclick="openModal('phaeng')">
+      <div class="card-icon">🎯</div>
+      <div class="card-level">Standard Controller</div>
+      <div class="card-name">Phaengkham</div>
+      <div class="card-role">All Projects</div>
+      <div class="card-desc">Quality control following team structural design.</div>
+    </div>
+    <div class="card c-purple" onclick="openModal('khoun')">
+      <div class="card-icon">⚡</div>
+      <div class="card-level">Automation Specialist</div>
+      <div class="card-name">Khounpasith</div>
+      <div class="card-role">Test Automation</div>
+      <div class="card-desc">Automated testing, scripts, and CI/CD integration.</div>
+    </div>
+    <div class="card c-orange" onclick="openModal('bua')">
+      <div class="card-icon">🔬</div>
+      <div class="card-level">R&D</div>
+      <div class="card-name">Bualaphanh</div>
+      <div class="card-role">Research & Innovation</div>
+      <div class="card-desc">Researches new tools to improve team accuracy and speed.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalDirect()">×</button>
+    <div class="modal-icon" id="mIcon"></div>
+    <div id="mTag"></div>
+    <div class="modal-name" id="mName"></div>
+    <div class="modal-role" id="mRole"></div>
+    <div class="modal-section-title">Key Responsibilities</div>
+    <ul class="modal-list" id="mList"></ul>
+  </div>
+</div>
+
+<script>
+const data = {
+  decha: {
+    icon: '🏆', name: 'Decha Kenthaworn', role: 'Head Coach', color: '#f5c842',
+    tag: 'Senior Management',
+    items: [
+      'Lead and guide the entire QA team toward project goals',
+      'Set the QA strategy, vision, and team standards',
+      'Mentor and coach team members for professional growth',
+      'Act as the primary escalation point for blockers and risks',
+      'Liaise with stakeholders, project managers, and dev leads',
+      'Evaluate team performance and ensure delivery alignment',
+    ]
+  },
+  edison: {
+    icon: '🔍', name: 'Edison Zhang', role: 'Inspector', color: '#4DAAFF',
+    tag: 'Senior Management',
+    items: [
+      'Oversee the quality of the QA process itself',
+      'Audit QA processes, reports, and test coverage',
+      'Ensure team follows established quality standards',
+      'Review deliverables before final sign-off',
+      'Identify process gaps and recommend corrective actions',
+      'Report quality metrics and findings to the Head Coach',
+    ]
+  },
+  marty: {
+    icon: '👁️', name: 'MartinyBob', role: 'Observer — All Projects', color: '#4DAAFF',
+    tag: 'QA Execution Team',
+    items: [
+      'Review all projects end-to-end before final delivery',
+      'Ensure overall quality meets acceptance criteria',
+      'Coordinate across QA members to consolidate results',
+      'Identify risks, gaps, and critical issues across projects',
+      'Provide final sign-off recommendations to management',
+      'Maintain a holistic view of all active QA projects',
+    ]
+  },
+  phaeng: {
+    icon: '🎯', name: 'Phaengkham Laoyangchai', role: 'Standard Controller', color: '#4DDDCC',
+    tag: 'QA Execution Team',
+    items: [
+      'Monitor and control quality per team structural design',
+      'Execute test cases based on defined test plans',
+      'Document test results, defects, and progress reports',
+      'Ensure all testing aligns with process guidelines',
+      'Track defect lifecycle from identification to resolution',
+      'Maintain and update test documentation and matrices',
+    ]
+  },
+  khoun: {
+    icon: '⚡', name: 'Khounpasith PHOMVISAY', role: 'Automation Specialist', color: '#b07dff',
+    tag: 'QA Execution Team',
+    items: [
+      'Design, build, and maintain automated test scripts',
+      'Identify test scenarios suitable for automation coverage',
+      'Integrate automated tests into CI/CD pipelines',
+      'Execute automated regression and smoke test suites',
+      'Report automated results and analyze failure trends',
+      'Collaborate with R&D on new automation approaches',
+    ]
+  },
+  bua: {
+    icon: '🔬', name: 'Bualaphanh.Ctv', role: 'Research & Development', color: '#FF9A4D',
+    tag: 'QA Execution Team',
+    items: [
+      'Research emerging QA tools, frameworks, and methodologies',
+      'Evaluate and pilot new testing approaches for adoption',
+      'Document research findings with recommendation reports',
+      'Propose process improvements to management',
+      'Train team members on newly adopted tools and workflows',
+      'Track industry trends to keep the team competitive',
+    ]
+  }
+};
+
+function openModal(key) {
+  const d = data[key];
+  document.getElementById('mIcon').textContent = d.icon;
+  document.getElementById('mName').textContent = d.name;
+  document.getElementById('mRole').style.color = d.color;
+  document.getElementById('mRole').textContent = d.role;
+  document.getElementById('mTag').innerHTML = `<span class="tag">${d.tag}</span>`;
+  const list = document.getElementById('mList');
+  list.innerHTML = d.items.map(i => `<li>${i}</li>`).join('');
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+}
+
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModalDirect();
+});
+</script>
+</body>
+</html>
